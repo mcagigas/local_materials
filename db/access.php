@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Materials capabilities. Only admins can view/add/edit/delete materials
  *
  * @package    local_materials
  * @copyright  2013 IOC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013091800;
-$plugin->release   = '1.0.0';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2013051401;
-$plugin->component = 'local_materials';
+$capabilities = array(
+
+    'local/materials:manage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    )
+);

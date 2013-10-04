@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cohort related management functions, this file needs to be included manually.
+ * Materials related managament.
  *
- * @package    core_cohort
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @package    local
+ * @subpackage materials
+ * @copyright  2013 IOC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,12 +38,9 @@ require_login();
 $category = null;
 
 if ($id) {
-    $material = $DB->get_record('local_materials', array('id'=>$id));
+    $material = $DB->get_record('local_materials', array('id' => $id));
 } else {
     $material = new stdClass();
-    $material->id = '';
-    $material->courseid = '';
-    $material->path = '';
 }
 
 $returnurl = new moodle_url('/local/materials/index.php');
@@ -50,10 +48,8 @@ $returnurl = new moodle_url('/local/materials/index.php');
 $context = context_system::instance();
 
 $PAGE->set_context($context);
-$PAGE->set_url('/local/materials/edit.php', array('id'=>$id, 'delete'=>$delete, 'confirm'=>$confirm));
+$PAGE->set_url('/local/materials/edit.php', array('id' => $id, 'delete' => $delete, 'confirm' => $confirm));
 $PAGE->set_context($context);
-
-
 
 if ($delete and $material->id) {
     $PAGE->url->param('delete', 1);
@@ -61,21 +57,26 @@ if ($delete and $material->id) {
         $DB->delete_records('local_materials', array('id' => $material->id));
         redirect($returnurl);
     }
-    $strheading = get_string('delcohort', 'cohort');
+    $strheading = get_string('delmaterial', 'local_materials');
     $PAGE->navbar->add($strheading);
     $PAGE->set_title($strheading);
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strheading);
-    $yesurl = new moodle_url('./edit.php', array('id'=>$material->id, 'delete'=>1, 'confirm'=>1,'sesskey'=>sesskey()));
-    $message = get_string('delconfirm', 'local_materials', array(format_string($material->path), format_string($material->courseid)));
+    $yesurl = new moodle_url('./edit.php', array('id' => $material->id, 'delete' => 1, 'confirm' => 1, 'sesskey' => sesskey()));
+    if ($course = $DB->get_record('course', array('id' => $material->courseid))) {
+        $messageparams = new stdClass;
+        $messageparams->path = $material->path;
+        $messageparams->course = $course->fullname;
+    }
+    $message = get_string('delconfirm', 'local_materials', $messageparams);
     echo $OUTPUT->confirm($message, $yesurl, $returnurl);
     echo $OUTPUT->footer();
     die;
 }
 
 if ($categoryid) {
-    $courses = $DB->get_records('course', array('category'=>$categoryid));
+    $courses = $DB->get_records('course', array('category' => $categoryid));
 } else {
     $courses = $DB->get_records('course', array());
 }
@@ -85,7 +86,7 @@ foreach ($courses as $course) {
     $courseselect[$course->id] = $course->fullname;
 }
 
-if ($material->id) {
+if (isset($material->id)) {
     // Edit existing.
     $strheading = get_string('edit');
 
@@ -97,9 +98,9 @@ if ($material->id) {
 $PAGE->set_title($strheading);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->navbar->add(get_string('plugin_pluginname', 'local_materials'));
-$PAGE->navbar->add($strheading, new moodle_url('/local/materials/edit.php', array('id'=>$id, 'delete'=>$delete, 'confirm'=>$confirm)));
-
-$editform = new material_edit_form(null, array('data'=>$material, 'categoryid'=>$categoryid, 'courses'=>$courseselect));
+$PAGE->navbar->add($strheading, new moodle_url('/local/materials/edit.php',
+    array('id' => $id, 'delete' => $delete, 'confirm' => $confirm)));
+$editform = new material_edit_form(null, array('data' => $material, 'categoryid' => $categoryid, 'courses' => $courseselect));
 
 if ($editform->is_cancelled()) {
     redirect($returnurl);
@@ -122,7 +123,7 @@ if ($editform->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strheading);
 
-if (!$material->id) {
+if (!isset($material->id)) {
     $list = coursecat::make_categories_list();
     $select = new single_select(new moodle_url('./edit.php', array()), 'categoryid', $list, $categoryid, null, 0);
     $select->nothing = array();

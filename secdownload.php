@@ -28,15 +28,12 @@ require_login();
 
 $path = required_param('path', PARAM_PATH);
 
-$path = trim($path, '/'); print_object($path);
-$parts = explode('/', $path); print_object($parts);
-print_object($CFG->local_materials_secret_url);
-while (count($parts) > 0) { print_object($parts); print_object(implode('/', $parts));
+$path = trim($path, '/');
+$parts = explode('/', $path);
+while (count($parts) > 0) {
     if ($records = $DB->get_records('local_materials', array('path' => implode('/', $parts)))) {
-
         foreach ($records as $record) {
             $context = context_course::instance($record->courseid);
-
             if (has_capability('moodle/course:viewparticipants', $context)) {
                 $time = sprintf("%08x", time());
                 $token = md5($CFG->local_materials_secret_token.'/'.$path.$time);
@@ -48,5 +45,5 @@ while (count($parts) > 0) { print_object($parts); print_object(implode('/', $par
         }
     }
     array_pop($parts);
-} die;
+}
 print_error('materialnotaccesible', 'local_materials');

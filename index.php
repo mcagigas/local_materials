@@ -33,6 +33,7 @@ $page = optional_param('page', 0, PARAM_INT);
 $searchquery = optional_param('search', '', PARAM_RAW);
 
 $context = context_system::instance();
+require_capability('local/materials:manage', $context);
 
 $strheading = get_string('plugin_pluginname', 'local_materials');
 
@@ -40,6 +41,7 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_url(new moodle_url('/local/materials/index.php'));
 $PAGE->set_title($strheading);
+$PAGE->add_body_class('path-admin');
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->navbar->add(get_string('plugin_pluginname', 'local_materials'));
 $PAGE->navbar->add($strheading, new moodle_url('/local/materials/index.php'));
@@ -60,7 +62,6 @@ $search .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => 
 $search .= html_writer::end_tag('div');
 $search .= html_writer::end_tag('form');
 echo $search;
-
 
 if (!empty($searchquery)) {
     $searchcoursesparams = array();
@@ -129,7 +130,6 @@ if ($materials) {
         $buttons[] = html_writer::link($editlink, $editicon);
         $buttons[] = html_writer::link($deletelink, $deleteicon);
         $line[] = implode(' ', $buttons);
-
         $data[] = $line;
     }
 }
@@ -144,50 +144,3 @@ echo $OUTPUT->paging_bar($totalmaterials, $page, PAGENUM, new moodle_url('/local
 
 echo $OUTPUT->single_button(new moodle_url('./edit.php', array('categoryid' => $categoryid)), get_string('add'));
 echo $OUTPUT->footer();
-
-/*
-$data = array();
-foreach($cohorts['cohorts'] as $cohort) {
-    $line = array();
-    $line[] = format_string($cohort->name);
-    $line[] = s($cohort->idnumber); // All idnumbers are plain text.
-    $line[] = format_text($cohort->description, $cohort->descriptionformat);
-
-    $line[] = $DB->count_records('cohort_members', array('cohortid' => $cohort->id));
-
-    if (empty($cohort->component)) {
-        $line[] = get_string('nocomponent', 'cohort');
-    } else {
-        $line[] = get_string('pluginname', $cohort->component);
-    }
-
-    $buttons = array();
-    if (empty($cohort->component)) {
-        if ($manager) {
-            $buttons[] = html_writer::link(new moodle_url('/cohort/edit.php', array('id' => $cohort->id, 'delete' =>1)), html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' =>get_string('delete'), 'class' => 'iconsmall')));
-            $buttons[] =  html_writer::link(new moodle_url('/cohort/edit.php', array('id' => $cohort->id)), html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'), 'alt' =>get_string('edit'), 'class' => 'iconsmall')));
-        }
-        if ($manager or $canassign) {
-            $buttons[] = html_writer::link(new moodle_url('/cohort/assign.php', array('id' => $cohort->id)), html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/users'), 'alt' =>get_string('assign', 'core_cohort'), 'class' => 'iconsmall')));
-        }
-    }
-    $line[] = implode(' ', $buttons);
-
-    $data[] = $line;
-}
-$table = new html_table();
-$table->head  = array(get_string('name', 'cohort'), get_string('idnumber', 'cohort'), get_string('description', 'cohort'),
-                      get_string('memberscount', 'cohort'), get_string('component', 'cohort'), get_string('edit'));
-$table->colclasses = array('leftalign name', 'leftalign id', 'leftalign description', 'leftalign size','centeralign source', 'centeralign action');
-$table->id = 'cohorts';
-$table->attributes['class'] = 'admintable generaltable';
-$table->data  = $data;
-echo html_writer::table($table);
-echo $OUTPUT->paging_bar($cohorts['totalcohorts'], $page, 25, $baseurl);
-
-if ($manager) {
-    echo $OUTPUT->single_button(new moodle_url('/cohort/edit.php', array('contextid' => $context->id)), get_string('add'));
-}
-
-echo $OUTPUT->footer();
-*/

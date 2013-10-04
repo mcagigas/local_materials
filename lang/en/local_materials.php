@@ -23,7 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['plugin_pluginname'] = 'Materials';
+$string['delconfirm'] = 'Do you really want to delete material \'{$a->path}\' associated to course \'{$a->course}\'?';
+$string['delmaterial'] = 'Delete Material';
 $string['materialnotaccesible'] = 'File not accesible, not acces to course';
+$string['pluginname'] = 'Materials';
+$string['plugin_pluginname'] = 'Materials';
 $string['searchmaterial'] = 'Search material';
-$string['delconfirm'] = 'Do you really want to delete material \'{$a}\' associated with \'{$a}\' course?';

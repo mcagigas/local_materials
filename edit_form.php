@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cohort related management functions, this file needs to be included manually.
+ * Materials related management form.
  *
  * @package    local
  * @subpackage materials
@@ -44,12 +44,11 @@ class material_edit_form extends moodleform {
 
         $select = $mform->addElement('select', 'courseid', get_string('courses'), $courses);
 
-        if ($material->courseid) {
+        if (isset($material->courseid)) {
             $select->setselected($material->courseid);
         }
 
         $mform->addRule('courseid', get_string('required'), 'required', null, 'client');
-
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
