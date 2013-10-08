@@ -144,3 +144,4 @@ echo $OUTPUT->paging_bar($totalmaterials, $page, PAGENUM, new moodle_url('/local
 
 echo $OUTPUT->single_button(new moodle_url('./edit.php', array('categoryid' => $categoryid)), get_string('add'));
 echo $OUTPUT->footer();
+

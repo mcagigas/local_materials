@@ -33,8 +33,6 @@ $categoryid = optional_param('categoryid', 1, PARAM_INT);
 $delete    = optional_param('delete', 0, PARAM_BOOL);
 $confirm   = optional_param('confirm', 0, PARAM_BOOL);
 
-require_login();
-
 $category = null;
 
 if ($id) {
@@ -46,6 +44,7 @@ if ($id) {
 $returnurl = new moodle_url('/local/materials/index.php');
 
 $context = context_system::instance();
+require_capability('local/materials:manage', $context);
 
 $PAGE->set_context($context);
 $PAGE->set_url('/local/materials/edit.php', array('id' => $id, 'delete' => $delete, 'confirm' => $confirm));

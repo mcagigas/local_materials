@@ -47,3 +47,4 @@ while (count($parts) > 0) {
     array_pop($parts);
 }
 print_error('materialnotaccesible', 'local_materials');
+
